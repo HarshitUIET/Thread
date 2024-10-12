@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  name String @db.VarChar(70)
+  username String @db.VarChar(70) @unique
+  email String @db.VarChar(70) @unique
+  password String? 
+  createdAt DateTime @default(now())
+  Post Post[]
+  Comment Comment[]
+  Notification Notification[]
+  Like Like[]
+}
+
+model Post {
+  id Int @id @default(autoincrement())
+  user User @relation(fields: [user_id],references: [id],onDelete: Cascade)
+  user_id Int
+  content String
+  image String?
+  created_at DateTime @default(now())
+  Comment Comment[]
+  comments_count Int @default(0)
+  Like Like[]
+  likes_count Int @default(0)
+}
+
+model Comment {
+  id Int @id @default(autoincrement())
+  user User @relation(fields: [user_id],references: [id],onDelete: Cascade)
+  user_id Int
+  post Post @relation(fields: [post_id],references: [id],onDelete: Cascade)
+  post_id Int
+  content String
+  created_at DateTime @default(now())
+}
+
+model Notification {
+  id Int @id @default(autoincrement())
+  user User @relation(fields: [user_id],references: [id],onDelete: Cascade)
+  user_id Int
+  content String
+  toUser_id Int
+  created_at DateTime @default(now())
+}
+
+model Like {
+ id Int @id @default(autoincrement())
+ post Post @relation(fields: [post_id],references: [id],onDelete: Cascade)
+ post_id Int
+ user User @relation(fields: [user_id],references: [id],onDelete: Cascade)
+ user_id Int
+}
