@@ -11,9 +11,9 @@ export type CustomSession = {
 
 export type CustomUser = {
     id?: string;
-    email?: string;
-    username?: string;
-    name?: string;
+    email?: string | null;
+    username?: string | null;
+    name?: string |null;
 };
 
 export const authOptions: AuthOptions = {
