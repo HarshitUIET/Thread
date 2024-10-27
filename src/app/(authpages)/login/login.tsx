@@ -33,9 +33,8 @@ export default function Login() {
           signIn('credentials', {
             email: authState.email,
             password: authState.password,
-            callbackUrl: params.get('callbackUrl') || '/', 
-            redirect: true,
           });
+          router.push('/');
         } else if (response.status === 400) {
           setErrors(response.errors);
         }
