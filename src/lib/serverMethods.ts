@@ -3,10 +3,14 @@ import { headers } from "next/headers";
 
 export async function  getPosts() {
 
+    console.log("IN posts");
+
     const res = await fetch(`${Env.APP_URL}/api/post`,{
         cache: 'no-cache',
         headers:headers(),
     });
+
+    console.log("Res",res);
 
     if(!res.ok) {
         throw new Error("Failed to fetch data");
