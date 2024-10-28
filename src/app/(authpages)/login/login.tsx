@@ -46,7 +46,9 @@ export default function Login() {
   };
 
   useEffect(() => {
+    console.log("status", status);
     if (status === 'authenticated') {
+      console.log('User is authenticated');
       router.push('/');
     }
   }, [status]);
