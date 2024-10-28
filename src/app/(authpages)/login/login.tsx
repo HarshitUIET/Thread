@@ -49,7 +49,7 @@ export default function Login() {
     console.log("status", status);
     if (status === 'authenticated') {
       console.log('User is authenticated');
-      router.push('/');
+      router.replace('/');
     }
   }, [status]);
 
