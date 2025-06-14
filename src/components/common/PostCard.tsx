@@ -18,37 +18,50 @@ export default function PostCard({post,noRedirect,isAuthCard}:{post :PostType,no
   const {toast} = useToast()
 
   const likeDislike = async (status:boolean) => {
+    // Optimistically update UI
     setStatus(status)
-    await axios.post('/api/like',{
-      toUser_id:post.user_id,
-      post_id:post.id,
-      status
-    })
-    .then((res)=>{
-      console.log(res.data);
+    if(status) {
+      post.likes_count++
+    } else {
+      post.likes_count--
+    }
+
+    try {
+      const res = await axios.post('/api/like',{
+        toUser_id:post.user_id,
+        post_id:post.id,
+        status
+      })
+      
       if(res.data.status === 200){
         toast({
           title:"Success",
           description:res.data.message,
           className:"bg-green-500"
         })
-      }
-      else if(res.data.status === 401){
-        toast({
-          title:"Error",
-          description:res.data.message,
-          className:"bg-red-500"
+        // Fetch updated post data in background
+        axios.get(`/api/post/${post.id}`)
+        .then((response) => {
+          if(response.data.status === 200) {
+            Object.assign(post, response.data.data)
+          }
         })
       }
-    })
-    .catch((error)=>{
-      console.log(error);
+    } catch (error) {
+      // Revert optimistic update on error
+      setStatus(!status)
+      if(status) {
+        post.likes_count--
+      } else {
+        post.likes_count++
+      }
+      
       toast({
         title:"Error",
         description:"An unexpected error occurred",
         className:"bg-red-500"
       })
-    })
+    }
   }
 
   return (
@@ -62,7 +75,7 @@ export default function PostCard({post,noRedirect,isAuthCard}:{post :PostType,no
 }
         <div className=' flex mt-2 space-x-4'>
           {
-            post.Like.length > 0 || status ?
+            post?.Like?.length > 0 || status ?
             <svg
               width="20"
               height="20"

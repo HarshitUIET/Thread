@@ -6,51 +6,55 @@ import { getServerSession } from "next-auth";
 import { join } from "path";
 
 export async function GET(req:NextRequest,{params}:{params:{id:number}}) {
-
     const session:CustomSession | null = await getServerSession(authOptions);
 
     if(!session){
         return NextResponse.json({status:401,data:"Unauthorized"})
     }
 
-
-    const post = await prisma.post.findUnique({
-        where:{
-            id:Number(params.id)
-        },
-        include:{
-            user:{
-                select:{
-                    id:true,
-                    name:true,
-                    username:true,
-                }
+    try {
+        const post = await prisma.post.findUnique({
+            where:{
+                id:Number(params.id)
             },
-            Comment :{
-                select:{
-                    id:true,
-                    content:true,
-                    user:{
-                        select:{
-                            id:true,
-                            name:true,
-                            username:true,
-                        }
+            include:{
+                user:{
+                    select:{
+                        id:true,
+                        name:true,
+                        username:true,
                     }
+                },
+                Comment:{
+                    include:{
+                        user:{
+                            select:{
+                                id:true,
+                                name:true,
+                                username:true,
+                            }
+                        }
+                    },
+                    orderBy: {
+                        created_at: 'desc'
+                    }
+                },
+                Like:{
+                   where:{
+                    user_id:Number(session?.user?.id)
+                   }
                 }
-            },
-            Like :{
-                take:1,
-               where:{
-                user_id:Number(session?.user?.id)
-               }
             }
-        },
-        
-    })
+        })
 
-    return NextResponse.json({status:200,data:post})
+        if (!post) {
+            return NextResponse.json({status:404,data:"Post not found"})
+        }
 
+        return NextResponse.json({status:200,data:post})
+    } catch (error) {
+        return NextResponse.json({status:500,data:"Internal Server Error"})
+    }
 }
 
 export async function DELETE(req:NextRequest,{params}:{params:{id:number}}) {

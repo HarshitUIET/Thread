@@ -25,7 +25,6 @@ export async function  GET(req:NextRequest) {
                 }
             },
             Like :{
-                take:1,
                where:{
                 user_id:Number(session?.user?.id)
                }

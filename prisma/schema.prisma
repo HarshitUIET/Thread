@@ -50,6 +50,7 @@ model Notification {
   content String
   toUser_id Int
   created_at DateTime @default(now())
+  is_viewed Boolean @default(false)
 }
 
 model Like {

@@ -29,5 +29,25 @@ export async function GET(req: NextRequest) {
     });
         
     return NextResponse.json({ status: 200, data: notifications });
+}
 
+export async function POST(req: NextRequest) {
+    const session: CustomSession | null = await getServerSession(authOptions);
+
+    if (!session) {
+        return NextResponse.json({ status: 401, message: "Unauthorized" });
+    }
+
+    // Mark all notifications as viewed for the current user
+    await prisma.notification.updateMany({
+        where: {
+            toUser_id: Number(session.user?.id),
+            is_viewed: false
+        },
+        data: {
+            is_viewed: true
+        }
+    });
+
+    return NextResponse.json({ status: 200, message: "Notifications marked as viewed" });
 }

@@ -29,11 +29,25 @@ export async function GET(req: NextRequest) {
                         username:true
                     }
                 },
+
                Like :{
-                    take:1,
                    where:{
                     user_id:Number(session?.user?.id)
                    }
+                },
+                Comment:{
+                    select:{
+                        id:true,
+                        content:true,
+                        user:{
+                            select:{
+                                id:true,
+                                name:true,
+                                username:true,
+                                createdAt:true
+                            }
+                        }
+                    }
                 }
             },
             orderBy: {
@@ -101,8 +115,6 @@ export async function POST(req: NextRequest) {
                 });
             }
         }
-
-        console.log(session);
 
         await prisma.post.create({
             data: {

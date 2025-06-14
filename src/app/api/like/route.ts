@@ -18,13 +18,15 @@ export async function POST(req: NextRequest) {
     }
 
     if(payload.status){
-        await prisma.notification.create({
-            data:{
-                user_id:Number(session?.user?.id),
-                toUser_id:Number(payload.toUser_id),
-                content:`${session?.user?.name} liked your post`
-            }
-        })
+        if(Number(session?.user?.id) !== Number(payload.toUser_id)) {
+            await prisma.notification.create({
+                data:{
+                    user_id:Number(session?.user?.id),
+                    toUser_id:Number(payload.toUser_id),
+                    content:`${session?.user?.name} liked your post`
+                }
+            })
+        }
         await prisma.post.update({
             where:{
                 id:Number(payload.post_id)

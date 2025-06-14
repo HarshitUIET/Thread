@@ -28,6 +28,7 @@ type PostType = {
     comments_count:number
     Like: Array<PostLikeType> | []
     likes_count:number
+    Comment: Array<CommentType> | []
 }
 
 type UserType = {
