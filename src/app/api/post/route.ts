@@ -9,6 +9,7 @@ import { join } from 'path';
 import { getRandomNumber } from '@/lib/utils';
 import { writeFile } from 'fs/promises';
 import prisma from '@/DB/db.config';
+import { uploadToCloudinary } from "@/lib/cloudinary";
 
 
 export async function GET(req: NextRequest) {
@@ -102,13 +103,10 @@ export async function POST(req: NextRequest) {
 
             try {
                 const buffer = Buffer.from(await image.arrayBuffer());
-                const uploadDir = join(process.cwd(), 'public', 'uploads');
-                const uniqueName = `${Date.now()}_${getRandomNumber(1, 9999)}`;
-                const imgExt = image?.name.split('.').pop() || 'png';
-                const fileName = `${uniqueName}.${imgExt}`;
-                await writeFile(`${uploadDir}/${fileName}`, buffer);
-                data.image = fileName;
+                const imageUrl = await uploadToCloudinary(buffer);
+                data.image = imageUrl;
             } catch (error) {
+                console.error('Cloudinary upload error:', error);
                 return NextResponse.json({
                     status: 500,
                     message: "Failed to upload the image.",

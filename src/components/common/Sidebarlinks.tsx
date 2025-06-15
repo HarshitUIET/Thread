@@ -84,7 +84,7 @@ export default function Sidebarlinks() {
                     </Link>
                 </li>
             </ul>
-            <div className="flex items-center space-x-4 mb-8">
+            <div className="flex items-center space-x-4 mt-[4rem] sm:mt-0 mb-8 ">
                 <SignOutBtn />
                 <div className="relative">
                     <ThemeToggleBtn />

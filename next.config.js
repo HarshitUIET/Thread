@@ -2,7 +2,13 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['localhost'],
+    domains: ['localhost', 'res.cloudinary.com'],
+  },
+  // Enable more detailed error messages in development
+  logging: {
+    fetches: {
+      fullUrl: true
+    }
   },
   // Add this to see more detailed error messages in development
   onError: (err) => {
